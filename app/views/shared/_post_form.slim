@@ -1,0 +1,7 @@
+= form_for @post do |f|
+    / = render "shard/error_megssages", f.object 
+    .field 
+        = f.rich_text_area :content, placeholder: "Enter new post..."
+    span.image 
+        = f.file_field :image
+    = f.submit "Post", class: "btn btn-primary"

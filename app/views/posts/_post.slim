@@ -1,0 +1,91 @@
+li id="post-#{post.id}" class="background-post"
+  = link_to gravatar_for(post.user, size: 50), "#"
+
+  span.user
+    = link_to post.user.name, "#" 
+    =  time_ago_in_words post.created_at 
+    |  ago.
+
+  .content
+    == post.content
+    = image_tag(post.display_image) if post.image.attached?
+
+  span.timestamp
+    .dropdown
+      a[class="dropdown-toggle" id="count_like-#{post.id}" data-toggle="dropdown" href="#"]
+        = pluralize post.likes.count, "Like"
+        b.caret                     
+      ul.dropdown-menu
+        - if post.likes.any?
+          - post.likes.each do |liker|
+            li
+              = gravatar_for(liker.user, size: 30)
+              = liker.user.name.inspect
+    div[id="count_comment-#{post.id}"]
+      = pluralize post.comments.count, "Comment"
+  
+  span.form_edit  id="#{post.id}"
+    - is_like = @user_likes[post.id].present?
+    div[class="like__post #{is_like ? 'red' : nil}"]
+      <i class="fa-regular fa-thumbs-up"></i> 
+      | Like
+    div 
+      <i class="fa-solid fa-pen-to-square"></i> 
+      = link_to "Edit", edit_post_path(post)
+    .btn-comment
+      <i class="fa-regular fa-message"></i> 
+      | comment
+    div
+      <i class="fa-regular fa-trash-can"></i> 
+      = link_to "Destroy", post, data: {confirm: "Are you sure?"}, method: :delete
+  .input_comment
+    = gravatar_for post.user, size: 40
+    = form_with  url: comment_api_v1_post_path, method: :post do |f|
+      span.text-fields
+        input class="form-control load_comment" name="comment" type="text" placeholder="write a comment" id="comment" style="width: 65%"
+        <input value="#{post.id}" name="post_id" id="post_id" hidden>
+  .container-comment
+    - post.comments.any?
+      ul.comment.list-comment
+        - post.comments.each do |comment|
+          div[class="comment_item" id="#{comment.id}"]
+            li.item
+              = gravatar_for comment.user, size: 40
+              span
+                = comment.user.name
+              p
+                = comment.content
+            li.dropdown
+              a[class="dropdown-toggle" data-toggle="dropdown" href="#"]
+                b.caret                    
+              ul.dropdown-menu
+                li
+                  <a href="#">edit</a>
+                  - if is_admin?(current_user) || current_user?(comment.user) || current_user?(post.user)
+                    li
+                      a.delete__comment delete
+
+  <script id="comment-list-item-template" type="text/x-handlebars-template">
+    <div class="comment_item" id={{ id }}>
+        <li class="item">
+            <img alt="" class="gravatar" src={{ avatar_url }}>
+            <span>
+              | {{ username }}
+            <p>
+              | {{ content }}
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <b class="caret"></b>
+            </a>                        
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#">edit</a>
+                </li>
+                <li>
+                    <a class="delete__comment">delete</a>
+                </li>
+            </ul>
+        </li>
+    </div>
+  </script>                             

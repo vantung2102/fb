@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title
+      = full_title yield(:title)
+    meta[name="viewport" content="width=device-width,initial-scale=1"]
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag "jquery"
+    = javascript_include_tag 'jquery.toast.min'
+    = javascript_include_tag "bootstrap.min"
+  body
+    = render "layouts/header"
+    .container
+      - flash.each do |message_type, message|
+        | <div class="alert alert-
+        = message_type
+        | "> 
+        = message
+    #notifications
+    .container
+      = yield
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>

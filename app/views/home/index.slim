@@ -1,0 +1,30 @@
+- provide :title, "Home"  
+.form-search
+  = form_with  url: root_path, method: :get do |f|
+    = render 'shared/search'
+
+.row 
+  aside.col-md-4 
+    section.user_info 
+      = gravatar_for(current_user)
+      h1 
+        = current_user.name
+      span 
+        = link_to "view my profile", "#"
+      span 
+        = pluralize current_user.posts.count, "posts"
+    section.post_form 
+      = render "shared/post_form"
+  .col-md-8
+    - if @posts.any?
+      h3
+        | Microposts (
+        = @posts.count
+        | )
+      ol.posts
+        = render @posts
+      == pagy_bootstrap_nav(@pagy)
+
+= javascript_include_tag "controllers/posts/like"
+= javascript_include_tag "controllers/posts/comment"
+= javascript_include_tag "handlebars"
